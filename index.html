@@ -525,9 +525,9 @@ function applyStats(s) {
   if (s.home) document.getElementById('stHome').innerText = s.home;
   if (s.notes) document.getElementById('stNotes').innerText = '«' + s.notes + '»';
 
-  const box = document.getElementById('choicesBox');
+    const box = document.getElementById('choicesBox');
   box.innerHTML = '';
-  if (Array.isArray(s.choices)) {
+  if (Array.isArray(s.choices) && s.choices.length > 0) {
     s.choices.forEach(ch => {
       const b = document.createElement('button');
       b.className = 'choice-btn';
@@ -538,9 +538,9 @@ function applyStats(s) {
       };
       box.appendChild(b);
     });
-  }
+  } else {
+    box.innerHTML = '<span style="color:var(--muted); font-size:12px;">Варианты появятся после следующего хода (или впиши своё действие ниже).</span>';
 }
-
 async function startNewGame() {
   if (!document.getElementById('apiKey').value.trim()) {
     alert('Сначала введи API Key от DeepSeek!');
