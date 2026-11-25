@@ -320,7 +320,8 @@
         <summary>🎒 Снаряжение при себе</summary>
         <ul>
           <li><b>На теле:</b> <span id="stWear">твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы, цепь, кольца, Rolex.</span></li>
-          <li><b>Карманы/пояс:</b> <span id="stPockets">RAZR, iPod, бумажник ($1,500, карта, права), £1, Zippo, портсигар, жвачка, ключи, блокнот.</span></li>
+          <li><b>Карманы/пояс:</b> <span id="stPockets">RAZR, iPod, £1, Zippo, портсигар, жвачка, ключи, блокнот.</span></li>
+          <li><b>👛 Бумажник:</b> <span id="stWallet">права IDP, пропуск, карта отца, нал ($150).</span></li>
           <li><b>В руках:</b> <span id="stHands">пусто</span></li>
           <li><b>Сумка:</b> <span id="stBag">учебники, тетради, сменка, кодовый замок.</span></li>
         </ul>
@@ -338,15 +339,21 @@
         <summary>🏠 Дома и в гараже</summary>
         <ul>
           <li><b>Квартира:</b> <span id="stHome">гардероб, гитара, скрипка, винил, чай, машинка самокруток, гантели, ПК.</span></li>
+          <li><b>🔒 Сейф (верхний отсек):</b> <span id="stSafeTop">$1,350 нал (пачка), британская SIM-карта.</span></li>
+          <li><b>🔫 Сейф (нижний/оружие):</b> <span id="stSafeBot">пусто.</span></li>
           <li><b>Гараж-бокс:</b> <span id="stGarage">верстак, тиски, слесарный набор, сварка, болгарка, точило.</span></li>
         </ul>
       </details>
 
-           <details class="acc">
+      <details class="acc">
+        <summary>🗺️ Карта Оук-Крик</summary>
+        <img src="map.jpg" alt="Карта Оук-Крик" class="map-preview" onerror="this.style.display='none'">
+      </details>
+
+      <details class="acc">
         <summary>📓 Кожаный блокнот</summary>
         <p id="stNotes">«Пока пусто. Провинциальная дыра с дождём и соснами».</p>
       </details>
-    </div>
 
     <div class="pane pane-extra" id="paneExtra">
       <button class="drawer-close" onclick="closeMobileDrawers()">✕ Вернуться к сюжету</button>
@@ -402,13 +409,16 @@ const JSON_PROTOCOL = [
   '  "skills": "Скрытый мир: 0% | Бокс/сават, фехтование, музыка, авторемонт, чай",',
   '  "rep": "Школа: Нейтрал | Саутсайд: Нейтрал | Копы: Настороженно | Скрытый мир: Неизвестен",',
   '  "debts": "пусто",',
-    '  "wear": "твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы, цепь, кольца, Rolex",',
-  '  "pockets": "RAZR, iPod, бумажник, £1, Zippo, портсигар, жвачка, ключи, блокнот",',
+  '  "wear": "твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы, цепь, кольца, Rolex",',
+  '  "pockets": "RAZR, iPod, £1, Zippo, портсигар, жвачка, ключи, блокнот",',
+  '  "wallet": "права IDP, пропуск, карта отца, нал ($150)",',
   '  "hands": "пусто",',
   '  "bag": "учебники, тетради, сменка, кодовый замок",',
   '  "cabin": "атлас дорог Орегона, страховка и документы",',
   '  "trunk": "спортсумка (перчатки/бинты), трос, баллонник",',
   '  "home": "гардероб, гитара, скрипка, винил, чай, машинка самокруток, гантели, ПК",',
+  '  "safeTop": "$1,350 нал (пачка), британская SIM-карта",',
+  '  "safeBot": "пусто",',
   '  "garage": "верстак, тиски, слесарный набор, сварка, болгарка, точило",',
   '  "notes": "Пока пусто. Провинциальная дыра с дождём и соснами",',
   '  "choices": ["Вариант 1", "Вариант 2", "Вариант 3"]',
@@ -583,13 +593,16 @@ function applyStats(s) {
   if (s.skills) document.getElementById('stSkills').innerText = s.skills;
   if (s.rep) document.getElementById('stRep').innerText = s.rep;
   if (s.debts) document.getElementById('stDebts').innerText = 'Долги/рычаги: ' + s.debts;
-    if (s.wear) document.getElementById('stWear').innerText = s.wear;
+  if (s.wear) document.getElementById('stWear').innerText = s.wear;
   if (s.pockets) document.getElementById('stPockets').innerText = s.pockets;
+  if (s.wallet) document.getElementById('stWallet').innerText = s.wallet;
   if (s.hands) document.getElementById('stHands').innerText = s.hands;
   if (s.bag) document.getElementById('stBag').innerText = s.bag;
   if (s.cabin) document.getElementById('stCabin').innerText = s.cabin;
   if (s.trunk) document.getElementById('stTrunk').innerText = s.trunk;
   if (s.home) document.getElementById('stHome').innerText = s.home;
+  if (s.safeTop) document.getElementById('stSafeTop').innerText = s.safeTop;
+  if (s.safeBot) document.getElementById('stSafeBot').innerText = s.safeBot;
   if (s.garage) document.getElementById('stGarage').innerText = s.garage;
   if (s.notes) document.getElementById('stNotes').innerText = '«' + s.notes + '»';
 
