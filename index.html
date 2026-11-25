@@ -55,6 +55,7 @@
     cursor: pointer;
   }
   .btn-sm:hover { border-color: var(--accent); }
+  #btnCharMobile { display: none; }
   .workspace { display: flex; flex: 1; overflow: hidden; }
   .pane { display: flex; flex-direction: column; overflow: hidden; }
   .pane-story { flex: 1.4; border-right: 1px solid var(--border); }
@@ -161,32 +162,45 @@
     border: 1px solid var(--border); color: #fff; border-radius: 6px; font-size: 14px;
   }
   .map-preview { width: 100%; border-radius: 8px; border: 1px solid var(--border); margin-top: 8px; }
-  .mobile-nav {
+  .drawer-close {
     display: none;
-    background: #090b0d;
-    border-top: 1px solid var(--border);
-    height: 50px;
-    flex-shrink: 0;
-  }
-  .nav-tab {
-    flex: 1;
-    background: none;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
     border: none;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    padding: 10px;
+    border-radius: 7px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
     cursor: pointer;
   }
-  .nav-tab.active { color: var(--accent); border-top: 2px solid var(--accent); }
+  .drawer-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 90;
+  }
+  .drawer-backdrop.open { display: block; }
   @media (max-width: 820px) {
-    .pane-story { border-right: none; }
-    .pane-char, .pane-extra { display: none; width: 100%; }
-    .pane.mobile-active { display: flex; }
-    .mobile-nav { display: flex; }
+    #btnCharMobile { display: inline-block; }
+    .pane-story { border-right: none; width: 100%; }
+    .drawer-close { display: block; }
+    .pane-char, .pane-extra {
+      display: block !important;
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 88%;
+      max-width: 380px;
+      height: 100dvh;
+      z-index: 100;
+      border-left: 1px solid var(--border);
+      box-shadow: -8px 0 24px rgba(0,0,0,0.85);
+      transition: right 0.25s ease;
+    }
+    .pane-char.drawer-open, .pane-extra.drawer-open { right: 0; }
     .choice-btn { width: 100%; }
   }
 </style>
@@ -195,15 +209,17 @@
   <div class="top-bar">
     <div class="status-line" id="topStatus">📅 Вт, 4 сен 2007 | 🕒 07:45 | 📍 Оук-Крик | 🌦️ +13°C | 🌗 48%</div>
     <div class="top-actions">
+      <button class="btn-sm" onclick="openMobileDrawer('Char')" id="btnCharMobile">📋 Чарник</button>
       <button class="btn-sm" onclick="toggleDesktopExtra()" id="btnExtraDesktop">🗺️ Карта / API</button>
-      <button class="btn-sm" onclick="undoLast()">↩️ Откат</button>
+      <button class="btn-sm" onclick="undoLast()">↩️</button>
     </div>
   </div>
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawers()"></div>
 
   <div class="workspace">
-    <div class="pane pane-story mobile-active" id="paneStory">
+    <div class="pane pane-story" id="paneStory">
       <div class="chat-log" id="chatLog">
-        <div class="msg msg-sys">Открой вкладку «Карта / API», введи ключ DeepSeek, загрузи свой .md файл и жми «Начать игру».</div>
+        <div class="msg msg-sys">Нажми «🗺️ Карта / API» вверху, введи ключ DeepSeek, загрузи свой .md файл и жми «▶️ Начать игру».</div>
       </div>
       <div class="choices-box" id="choicesBox"></div>
       <div class="input-area">
@@ -222,6 +238,7 @@
     </div>
 
     <div class="pane pane-char" id="paneChar">
+      <button class="drawer-close" onclick="closeMobileDrawers()">✕ Вернуться к сюжету</button>
       <div class="card">
         <h3>📋 Чейз Уокер (16 лет | ДР: 19 ноя)</h3>
         <div class="stat-grid">
@@ -266,6 +283,7 @@
     </div>
 
     <div class="pane pane-extra" id="paneExtra">
+      <button class="drawer-close" onclick="closeMobileDrawers()">✕ Вернуться к сюжету</button>
       <div class="card">
         <h3>⚙️ Подключение DeepSeek API</h3>
         <div class="field-group">
@@ -299,12 +317,6 @@
         <img id="mapImg" src="map.jpg" alt="Карта" class="map-preview" onerror="this.style.display='none'">
       </div>
     </div>
-  </div>
-
-  <div class="mobile-nav">
-    <button class="nav-tab active" onclick="switchMobileTab('Story', this)">📖<span>Сюжет</span></button>
-    <button class="nav-tab" onclick="switchMobileTab('Char', this)">📋<span>Чарник</span></button>
-    <button class="nav-tab" onclick="switchMobileTab('Extra', this)">🗺️<span>Карта / API</span></button>
   </div>
 <script>
 const DEFAULT_LORE = `Ты — Мастер Игры (ГМ) в текстовой RPG в жанре городского фэнтези, школьной повседневности и мистического детектива (Оук-Крик, Орегон, старт 4 сентября 2007 года). Главный герой — 16-летний британец Чейз Уокер на чёрном Nissan Skyline GT-R (R34) с красной паутиной. Начинай игру с пасмурного утра вторника 4 сентября 2007 года на парковке школы Oak Creek High. Веди одну сцену за раз, не пиши за героя.`;
@@ -361,14 +373,23 @@ function saveSettings() {
   localStorage.setItem('oc_model', document.getElementById('modelSelect').value);
 }
 
-function switchMobileTab(tab, btn) {
-  document.querySelectorAll('.pane').forEach(p => p.classList.remove('mobile-active'));
-  document.getElementById('pane' + tab).classList.add('mobile-active');
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+function openMobileDrawer(tab) {
+  closeMobileDrawers();
+  document.getElementById('pane' + tab).classList.add('drawer-open');
+  document.getElementById('drawerBackdrop').classList.add('open');
+}
+
+function closeMobileDrawers() {
+  document.getElementById('paneChar').classList.remove('drawer-open');
+  document.getElementById('paneExtra').classList.remove('drawer-open');
+  document.getElementById('drawerBackdrop').classList.remove('open');
 }
 
 function toggleDesktopExtra() {
+  if (window.innerWidth <= 820) {
+    openMobileDrawer('Extra');
+    return;
+  }
   const charPane = document.getElementById('paneChar');
   const extraPane = document.getElementById('paneExtra');
   const btn = document.getElementById('btnExtraDesktop');
@@ -473,7 +494,7 @@ async function startNewGame() {
   localStorage.removeItem('oc_history');
   document.getElementById('chatLog').innerHTML = '';
   if (window.innerWidth <= 820) {
-    switchMobileTab('Story', document.querySelectorAll('.nav-tab').item(0));
+    closeMobileDrawers();
   } else {
     toggleDesktopExtra();
   }
