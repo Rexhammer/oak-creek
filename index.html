@@ -271,38 +271,53 @@
         </div>
       </div>
 
-      <div class="card">
-        <h3>🚗 Nissan Skyline GT-R (R34)</h3>
+            <details class="acc">
+        <summary>🚗 Nissan Skyline GT-R (R34)</summary>
         <p id="stCar">Бак: 100% | Состояние: идеальное | Тюнинг: Сток+ (~340 л.с.)</p>
-      </div>
+      </details>
 
-      <div class="card">
-        <h3>📚 Учёба и Навыки</h3>
+      <details class="acc">
+        <summary>📚 Учёба и Навыки</summary>
         <p id="stSchool">GPA: 3.0 (B) | Алг: C, Лит: B, Ист: B, Хим/Био: C, Физ: A</p>
         <p style="margin-top:5px; color:var(--muted);" id="stSkills">Скрытый мир: 0% | Бокс/сават, фехтование, гитара/скрипка, авторемонт, чай.</p>
-      </div>
+      </details>
 
-      <div class="card">
-        <h3>🤝 Репутация и Долги</h3>
+      <details class="acc">
+        <summary>🤝 Репутация и Долги</summary>
         <p id="stRep">Школа: Нейтрал | Саутсайд: Нейтрал | Копы: Настороженно | Скрытый мир: Неизвестен</p>
         <p style="margin-top:4px; color:#f0c674;" id="stDebts">Долги/рычаги: пусто</p>
-      </div>
+      </details>
 
-      <div class="card">
-        <h3>🎒 Инвентарь и База</h3>
+      <details class="acc" open>
+        <summary>🎒 Снаряжение при себе</summary>
         <ul>
-          <li><b>На себе:</b> <span id="stInvSelf">цепь мокуме-гане, печатка, кольцо с орлом, Rolex, RAZR, iPod, £1, Zippo, портсигар, ключи, блокнот, сумка.</span></li>
-          <li><b>Одежда:</b> <span id="stClothes">твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы.</span></li>
-          <li><b>Багажник R34:</b> <span id="stTrunk">спортсумка, трос, баллонник.</span></li>
-          <li><b>🏠 Дома/гараж:</b> <span id="stHome">гардероб, гитара, скрипка, винил, чайник, машинка самокруток, гантели, верстак/сварка.</span></li>
+          <li><b>На теле:</b> <span id="stWear">твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы, цепь, кольца, Rolex.</span></li>
+          <li><b>Карманы/пояс:</b> <span id="stPockets">RAZR, iPod, бумажник ($1,500, карта, права), £1, Zippo, портсигар, жвачка, ключи, блокнот.</span></li>
+          <li><b>В руках:</b> <span id="stHands">пусто</span></li>
+          <li><b>Сумка:</b> <span id="stBag">учебники, тетради, сменка, кодовый замок.</span></li>
         </ul>
-      </div>
+      </details>
 
-      <div class="card">
-        <h3>📓 Кожаный блокнот</h3>
+      <details class="acc">
+        <summary>🚗 В машине (Skyline R34)</summary>
+        <ul>
+          <li><b>Салон / бардачок:</b> <span id="stCabin">атлас дорог Орегона, страховка и документы.</span></li>
+          <li><b>Багажник (снаружи):</b> <span id="stTrunk">спортсумка (перчатки/бинты), трос, баллонник.</span></li>
+        </ul>
+      </details>
+
+      <details class="acc">
+        <summary>🏠 Дома и в гараже</summary>
+        <ul>
+          <li><b>Квартира:</b> <span id="stHome">гардероб, гитара, скрипка, винил, чай, машинка самокруток, гантели, ПК.</span></li>
+          <li><b>Гараж-бокс:</b> <span id="stGarage">верстак, тиски, слесарный набор, сварка, болгарка, точило.</span></li>
+        </ul>
+      </details>
+
+      <details class="acc">
+        <summary>📓 Кожаный блокнот</summary>
         <p id="stNotes">«Пока пусто. Провинциальная дыра с дождём и соснами».</p>
-      </div>
-    </div>
+      </details>
 
     <div class="pane pane-extra" id="paneExtra">
       <button class="drawer-close" onclick="closeMobileDrawers()">✕ Вернуться к сюжету</button>
@@ -358,10 +373,14 @@ const JSON_PROTOCOL = [
   '  "skills": "Скрытый мир: 0% | Бокс/сават, фехтование, музыка, авторемонт, чай",',
   '  "rep": "Школа: Нейтрал | Саутсайд: Нейтрал | Копы: Настороженно | Скрытый мир: Неизвестен",',
   '  "debts": "пусто",',
-  '  "invSelf": "цепь мокуме-гане, печатка, кольцо с орлом, Rolex, RAZR, iPod, £1, Zippo, портсигар, ключи, блокнот, сумка",',
-  '  "clothes": "твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы",',
-  '  "trunk": "спортсумка, трос, баллонник",',
-  '  "home": "гардероб, гитара, скрипка, винил, чайник, машинка самокруток, гантели, верстак/сварка",',
+    '  "wear": "твидовый пиджак, футболка The Clash, чёрные джинсы, окованные берцы, цепь, кольца, Rolex",',
+  '  "pockets": "RAZR, iPod, бумажник, £1, Zippo, портсигар, жвачка, ключи, блокнот",',
+  '  "hands": "пусто",',
+  '  "bag": "учебники, тетради, сменка, кодовый замок",',
+  '  "cabin": "атлас дорог Орегона, страховка и документы",',
+  '  "trunk": "спортсумка (перчатки/бинты), трос, баллонник",',
+  '  "home": "гардероб, гитара, скрипка, винил, чай, машинка самокруток, гантели, ПК",',
+  '  "garage": "верстак, тиски, слесарный набор, сварка, болгарка, точило",',
   '  "notes": "Пока пусто. Провинциальная дыра с дождём и соснами",',
   '  "choices": ["Вариант 1", "Вариант 2", "Вариант 3"]',
   "}",
@@ -532,10 +551,14 @@ function applyStats(s) {
   if (s.skills) document.getElementById('stSkills').innerText = s.skills;
   if (s.rep) document.getElementById('stRep').innerText = s.rep;
   if (s.debts) document.getElementById('stDebts').innerText = 'Долги/рычаги: ' + s.debts;
-  if (s.invSelf) document.getElementById('stInvSelf').innerText = s.invSelf;
-  if (s.clothes) document.getElementById('stClothes').innerText = s.clothes;
+    if (s.wear) document.getElementById('stWear').innerText = s.wear;
+  if (s.pockets) document.getElementById('stPockets').innerText = s.pockets;
+  if (s.hands) document.getElementById('stHands').innerText = s.hands;
+  if (s.bag) document.getElementById('stBag').innerText = s.bag;
+  if (s.cabin) document.getElementById('stCabin').innerText = s.cabin;
   if (s.trunk) document.getElementById('stTrunk').innerText = s.trunk;
   if (s.home) document.getElementById('stHome').innerText = s.home;
+  if (s.garage) document.getElementById('stGarage').innerText = s.garage;
   if (s.notes) document.getElementById('stNotes').innerText = '«' + s.notes + '»';
 
   const box = document.getElementById('choicesBox');
@@ -564,13 +587,40 @@ async function startNewGame() {
   if (state.history.length > 0 && !confirm('Начать новую игру? Текущий прогресс будет перезаписан.')) return;
   state.history = [];
   localStorage.removeItem('oc_history');
-  document.getElementById('chatLog').innerHTML = '';
+  const log = document.getElementById('chatLog');
+  log.innerHTML = '';
+
   if (window.innerWidth <= 820) {
     closeMobileDrawers();
   } else {
     toggleDesktopExtra();
   }
-  await callDeepSeek('Начинай игру строго с Раздела 27 (утро вторника, 4 сентября 2007 года, парковка Oak Creek High).', true);
+
+  const introText = "После череды уличных драк, громких выходок и проблем с полицией лондонский криминальный авторитет решил утихомирить 16-летнего сына Чейза и отправил его подальше от столичных соблазнов — в глухой и дождливый городок Оук-Крик (штат Орегон) под присмотр старого знакомого, Кассиана Вейла. Вместе с парнем через океан приехал его коллекционный чёрный Nissan Skyline GT-R (R34). Для самого Чейза эта ссылка — наказание и скучная провинциальная дыра, где нужно отсидеться и доказать отцу свою самостоятельность. Он ещё не подозревает, что тихое на первый взгляд место и его окрестности скрывают свои тайны.";
+
+  appendMessage('assistant', introText);
+  state.history.push({ role: 'assistant', content: introText });
+  localStorage.setItem('oc_history', JSON.stringify(state.history));
+
+  const box = document.getElementById('choicesBox');
+  const arrow = document.getElementById('choicesArrow');
+  box.innerHTML = '';
+  box.classList.remove('collapsed');
+  if (arrow) arrow.innerText = '▴';
+
+  const startBtn = document.createElement('button');
+  startBtn.className = 'choice-btn';
+  startBtn.style.borderColor = 'var(--gold)';
+  startBtn.style.color = '#fff';
+  startBtn.style.fontWeight = '700';
+  startBtn.textContent = '▶️ Начать игру (Вторник, 4 сентября 2007)';
+  startBtn.onclick = async () => {
+    box.innerHTML = '';
+    box.classList.add('collapsed');
+    if (arrow) arrow.innerText = '▾';
+    await callDeepSeek('Начинай игру строго с Раздела 27 (утро вторника, 4 сентября 2007 года, парковка Oak Creek High).', true);
+  };
+  box.appendChild(startBtn);
 }
 
 async function sendMessage() {
