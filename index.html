@@ -72,28 +72,20 @@
   .msg {
     padding: 11px 14px;
     border-radius: 9px;
-    line-height: 1.5;
+    line-height: 1.55;
     font-size: 15px;
     word-wrap: break-word;
   }
+  .msg p { margin-bottom: 10px; }
+  .msg p:last-child { margin-bottom: 0; }
   .rpg-narr { color: #9ea9b8; }
   .rpg-speech { color: #ffffff; font-weight: 500; border-left: 2px solid var(--gold); padding-left: 9px; display: block; margin: 4px 0; }
   .rpg-action { color: #8b96a5; font-style: italic; }
   .rpg-thought { color: #738091; font-style: italic; font-size: 13.5px; }
-  .msg p { margin-bottom: 10px; }
-  .msg p:last-child { margin-bottom: 0; }
   .msg-gm { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); }
   .msg-user { background: #1e2631; border: 1px solid #324054; align-self: flex-end; max-width: 88%; color: #fff; }
   .msg-sys { color: var(--muted); font-size: 12px; text-align: center; padding: 4px; }
-  .choices-box {
-    padding: 8px 12px;
-    background: #111419;
-    border-top: 1px solid var(--border);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-    .choices-toggle {
+  .choices-toggle {
     background: #111419;
     border-top: 1px solid var(--border);
     padding: 6px 12px;
@@ -105,8 +97,15 @@
     align-items: center;
     user-select: none;
   }
+  .choices-box {
+    padding: 8px 12px;
+    background: #111419;
+    border-top: 1px solid #1e242d;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
   .choices-box.collapsed { display: none; }
-
   .choice-btn {
     background: var(--card);
     border: 1px solid #3a4657;
@@ -346,7 +345,7 @@ const DEFAULT_LORE = `Ты — Мастер Игры (ГМ) в текстово�
 
 const JSON_PROTOCOL = `
 ВАЖНОЕ СИСТЕМНОЕ ТРЕБОВАНИЕ ИНТЕРФЕЙСА:
-1. В конце КАЖДОГО ответа (после текста сцены) ОБЯЗАТЕЛЬНО добавь скрытый технический блок строго в таком формате:
+1. В конце КАЖДОГО ответа (после текста сцены) ОБЯЗАТЕЛЬНО добавь скрытый технический блок строго в таком формате (массив "choices" ВСЕГДА должен содержать 3-4 варианта действий):
 <state>
 {
   "header": "📅 Вт, 4 сен 2007 | 🕒 07:45 | 📍 Оук-Крик, парковка | 🌦️ +13°C, туман | 🌗 48%",
@@ -365,13 +364,13 @@ const JSON_PROTOCOL = `
   "home": "гардероб, гитара, скрипка, винил, чайник, машинка самокруток, гантели, верстак/сварка",
   "notes": "Пока пусто. Провинциальная дыра с дождём и соснами",
   "choices": [
-    "Вариант 1 (коротко)",
-    "Вариант 2 (коротко)",
-    "Вариант 3 (коротко)"
+    "Вариант 1",
+    "Вариант 2",
+    "Вариант 3"
   ]
 }
 </state>
-2. В самом тексте ответа НЕ дублируй текстовый чарник и строку с датой/временем/погодой (шапку) — всё это интерфейс сам отображает сверху и в панели Чарника из блока <state>. В тексте оставляй только живую сцену, разделяя повествование, реплики диалогов (с тире — с новой строки) и действия (*в звёздочках*) на короткие абзацы.
+2. В самом тексте ответа НЕ дублируй текстовый чарник и строку с датой/временем/погодой (шапку). Оставляй только живую сцену, разделяя описания и реплики диалогов (с тире — с новой строки) на короткие абзацы.
 `;
 
 let state = {
@@ -427,17 +426,18 @@ function toggleDesktopExtra() {
   }
 }
 
+function toggleChoices() {
+  const box = document.getElementById('choicesBox');
+  const arrow = document.getElementById('choicesArrow');
+  if (!box) return;
+  box.classList.toggle('collapsed');
+  if (arrow) arrow.innerText = box.classList.contains('collapsed') ? '▾' : '▴';
+}
+
 function insertTag(text) {
   const input = document.getElementById('userInput');
   input.value += (input.value ? ' ' : '') + text;
   input.focus();
-}
-  
-function toggleChoices() {
-  const box = document.getElementById('choicesBox');
-  const arrow = document.getElementById('choicesArrow');
-  box.classList.toggle('collapsed');
-  arrow.innerText = box.classList.contains('collapsed') ? '▾' : '▴';
 }
 
 function loadMasterFile(e) {
@@ -483,6 +483,7 @@ function formatRpgText(raw) {
     })
     .join('');
 }
+
 function appendMessage(role, text) {
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
@@ -495,7 +496,6 @@ function appendMessage(role, text) {
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
 }
-
 
 function renderHistory() {
   const log = document.getElementById('chatLog');
@@ -525,7 +525,7 @@ function applyStats(s) {
   if (s.home) document.getElementById('stHome').innerText = s.home;
   if (s.notes) document.getElementById('stNotes').innerText = '«' + s.notes + '»';
 
-    const box = document.getElementById('choicesBox');
+  const box = document.getElementById('choicesBox');
   box.innerHTML = '';
   if (Array.isArray(s.choices) && s.choices.length > 0) {
     s.choices.forEach(ch => {
@@ -539,8 +539,10 @@ function applyStats(s) {
       box.appendChild(b);
     });
   } else {
-    box.innerHTML = '<span style="color:var(--muted); font-size:12px;">Варианты появятся после следующего хода (или впиши своё действие ниже).</span>';
+    box.innerHTML = '<span style="color:var(--muted); font-size:12px;">Варианты появятся после следующего хода.</span>';
+  }
 }
+
 async function startNewGame() {
   if (!document.getElementById('apiKey').value.trim()) {
     alert('Сначала введи API Key от DeepSeek!');
