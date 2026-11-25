@@ -375,16 +375,33 @@ let state = {
   lastStats: JSON.parse(localStorage.getItem('oc_stats') || 'null')
 };
 
-window.onload = () => {
+window.onload = async () => {
   document.getElementById('apiKey').value = localStorage.getItem('oc_api_key') || '';
   document.getElementById('modelSelect').value = localStorage.getItem('oc_model') || 'deepseek-chat';
-  if (localStorage.getItem('oc_lore')) {
-    document.getElementById('loreStatus').innerText = '✅ Мастер-файл загружен в память браузера';
-    document.getElementById('loreStatus').style.color = '#38a169';
-  }
   if (state.lastStats) applyStats(state.lastStats);
   renderHistory();
+
+  try {
+    const res = await fetch('lore.md?v=' + Date.now());
+    if (res.ok) {
+      const text = await res.text();
+      if (text.trim().length > 100) {
+        state.lore = text;
+        localStorage.setItem('oc_lore', text);
+        const st = document.getElementById('loreStatus');
+        st.innerText = '✅ Лор автоматически загружен с GitHub (lore.md)';
+        st.style.color = '#38a169';
+        return;
+      }
+    }
+  } catch (e) {}
+
+  if (localStorage.getItem('oc_lore')) {
+    document.getElementById('loreStatus').innerText = '✅ Мастер-файл загружен из кэша браузера';
+    document.getElementById('loreStatus').style.color = '#38a169';
+  }
 };
+
 
 function saveSettings() {
   localStorage.setItem('oc_api_key', document.getElementById('apiKey').value.trim());
