@@ -61,6 +61,8 @@
   .pane-story { flex: 1.4; border-right: 1px solid var(--border); }
   .pane-char, .pane-extra { flex: 1; background: var(--panel); overflow-y: auto; padding: 12px; }
   .pane-extra { display: none; }
+  .desktop-hidden { display: none !important; }
+
   .chat-log {
     flex: 1;
     overflow-y: auto;
@@ -221,6 +223,32 @@
     .pane-char.drawer-open, .pane-extra.drawer-open { right: 0; }
     .choice-btn { width: 100%; }
   }
+    details.acc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-bottom: 10px;
+  }
+  details.acc summary {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--gold);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  details.acc summary::-webkit-details-marker { display: none; }
+  details.acc summary::after { content: "▾"; font-size: 14px; }
+  details.acc[open] summary::after { content: "▴"; }
+  details.acc[open] summary { margin-bottom: 8px; border-bottom: 1px solid #262f3b; padding-bottom: 6px; }
+  details.acc ul { padding-left: 16px; }
+  details.acc li, details.acc p { font-size: 13px; line-height: 1.45; }
+
 </style>
 </head>
 <body>
@@ -401,24 +429,26 @@ window.onload = async () => {
   if (state.lastStats) applyStats(state.lastStats);
   renderHistory();
 
-  try {
-    const res = await fetch('lore.md?v=' + Date.now());
-    if (res.ok) {
-      const text = await res.text();
-      if (text.trim().length > 100) {
-        state.lore = text;
-        localStorage.setItem('oc_lore', text);
-        const st = document.getElementById('loreStatus');
-        st.innerText = '✅ Лор автоматически загружен с GitHub (lore.md)';
-        st.style.color = '#38a169';
-        return;
+  const st = document.getElementById('loreStatus');
+  for (const fname of ['lore.md', 'Lore.md']) {
+    try {
+      const res = await fetch(fname + '?v=' + Date.now());
+      if (res.ok) {
+        const text = await res.text();
+        if (text.trim().length > 100) {
+          state.lore = text;
+          localStorage.setItem('oc_lore', text);
+          st.innerText = '✅ Лор автоматически загружен с GitHub (' + fname + ')';
+          st.style.color = '#38a169';
+          return;
+        }
       }
-    }
-  } catch (e) {}
+    } catch (e) {}
+  }
 
   if (localStorage.getItem('oc_lore')) {
-    document.getElementById('loreStatus').innerText = '✅ Мастер-файл загружен из кэша браузера';
-    document.getElementById('loreStatus').style.color = '#38a169';
+    st.innerText = '✅ Мастер-файл загружен из кэша браузера';
+    st.style.color = '#38a169';
   }
 };
 
@@ -447,13 +477,15 @@ function toggleDesktopExtra() {
   const charPane = document.getElementById('paneChar');
   const extraPane = document.getElementById('paneExtra');
   const btn = document.getElementById('btnExtraDesktop');
-  if (extraPane.style.display === 'block') {
+  const isExtraVisible = extraPane.style.display === 'flex';
+
+  if (isExtraVisible) {
     extraPane.style.display = 'none';
-    charPane.style.display = 'block';
+    charPane.classList.remove('desktop-hidden');
     btn.innerText = '🗺️ Карта / API';
   } else {
-    charPane.style.display = 'none';
-    extraPane.style.display = 'block';
+    charPane.classList.add('desktop-hidden');
+    extraPane.style.display = 'flex';
     btn.innerText = '📋 Чарник';
   }
 }
