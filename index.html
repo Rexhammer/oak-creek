@@ -88,6 +88,20 @@
     flex-wrap: wrap;
     gap: 6px;
   }
+    .choices-toggle {
+    background: #111419;
+    border-top: 1px solid var(--border);
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .choices-box.collapsed { display: none; }
+
   .choice-btn {
     background: var(--card);
     border: 1px solid #3a4657;
@@ -221,7 +235,11 @@
       <div class="chat-log" id="chatLog">
         <div class="msg msg-sys">Нажми «🗺️ Карта / API» вверху, введи ключ DeepSeek, загрузи свой .md файл и жми «▶️ Начать игру».</div>
       </div>
-      <div class="choices-box" id="choicesBox"></div>
+      <div class="choices-toggle" id="choicesToggle" onclick="toggleChoices()">
+        <span>💡 Варианты действий</span>
+        <span id="choicesArrow">▾</span>
+      </div>
+      <div class="choices-box collapsed" id="choicesBox"></div>
       <div class="input-area">
         <div class="quick-tags">
           <button class="tag-btn" onclick="insertTag('*...*')">*действие*</button>
@@ -408,6 +426,13 @@ function insertTag(text) {
   const input = document.getElementById('userInput');
   input.value += (input.value ? ' ' : '') + text;
   input.focus();
+}
+  
+function toggleChoices() {
+  const box = document.getElementById('choicesBox');
+  const arrow = document.getElementById('choicesArrow');
+  box.classList.toggle('collapsed');
+  arrow.innerText = box.classList.contains('collapsed') ? '▾' : '▴';
 }
 
 function loadMasterFile(e) {
