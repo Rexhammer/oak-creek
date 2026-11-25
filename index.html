@@ -76,9 +76,10 @@
     font-size: 15px;
     word-wrap: break-word;
   }
-  .rpg-speech { color: #ffffff; font-weight: 500; border-left: 2px solid var(--gold); padding-left: 8px; display: inline-block; margin: 2px 0; }
-  .rpg-action { color: #9aa7b8; font-style: italic; }
-  .rpg-thought { color: #7e8b9d; font-style: italic; font-size: 14px; }
+  .rpg-narr { color: #9ea9b8; }
+  .rpg-speech { color: #ffffff; font-weight: 500; border-left: 2px solid var(--gold); padding-left: 9px; display: block; margin: 4px 0; }
+  .rpg-action { color: #8b96a5; font-style: italic; }
+  .rpg-thought { color: #738091; font-style: italic; font-size: 13.5px; }
   .msg p { margin-bottom: 10px; }
   .msg p:last-child { margin-bottom: 0; }
   .msg-gm { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); }
@@ -476,13 +477,12 @@ function formatRpgText(raw) {
         .replace(/\(([^)]+)\)/g, '<span class="rpg-thought">($1)</span>');
 
       if (/^(—|–|-|«|")/.test(line)) {
-        formatted = '<span class="rpg-speech">' + formatted + '</span>';
+        return '<p class="rpg-speech">' + formatted + '</p>';
       }
-      return '<p>' + formatted + '</p>';
+      return '<p class="rpg-narr">' + formatted + '</p>';
     })
     .join('');
 }
-
 function appendMessage(role, text) {
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
