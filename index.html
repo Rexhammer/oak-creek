@@ -74,9 +74,13 @@
     border-radius: 9px;
     line-height: 1.5;
     font-size: 15px;
-    white-space: pre-wrap;
     word-wrap: break-word;
   }
+    .rpg-speech { color: #ffffff; font-weight: 500; border-left: 2px solid var(--gold); padding-left: 8px; display: inline-block; margin: 2px 0; }
+  .rpg-action { color: #9aa7b8; font-style: italic; }
+  .rpg-thought { color: #7e8b9d; font-style: italic; font-size: 14px; }
+  .msg p { margin-bottom: 10px; }
+  .msg p:last-child { margin-bottom: 0; }
   .msg-gm { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); }
   .msg-user { background: #1e2631; border: 1px solid #324054; align-self: flex-end; max-width: 88%; color: #fff; }
   .msg-sys { color: var(--muted); font-size: 12px; text-align: center; padding: 4px; }
@@ -366,7 +370,7 @@ const JSON_PROTOCOL = `
   ]
 }
 </state>
-2. В самом тексте ответа НЕ дублируй текстовый чарник и строку с датой/временем/погодой (шапку) — всё это интерфейс сам отображает сверху и в панели Чарника из блока <state>. В тексте оставляй только живую сцену и варианты действий.
+2. В самом тексте ответа НЕ дублируй текстовый чарник и строку с датой/временем/погодой (шапку) — всё это интерфейс сам отображает сверху и в панели Чарника из блока <state>. В тексте оставляй только живую сцену, разделяя повествование, реплики диалогов (с тире — с новой строки) и действия (*в звёздочках*) на короткие абзацы.
 `;
 
 let state = {
@@ -456,14 +460,42 @@ function previewMap(e) {
   img.src = URL.createObjectURL(file);
   img.style.display = 'block';
 }
+function formatRpgText(raw) {
+  const esc = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return esc
+    .split(/\n+/)
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      let formatted = line
+        .replace(/\*([^*]+)\*/g, '<span class="rpg-action">*$1*</span>')
+        .replace(/\(([^)]+)\)/g, '<span class="rpg-thought">($1)</span>');
+
+      if (/^(—|–|-|«|")/.test(line)) {
+        formatted = '<span class="rpg-speech">' + formatted + '</span>';
+      }
+      return '<p>' + formatted + '</p>';
+    })
+    .join('');
+}
+
 function appendMessage(role, text) {
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
   div.className = 'msg ' + (role === 'user' ? 'msg-user' : role === 'assistant' ? 'msg-gm' : 'msg-sys');
-  div.textContent = text;
+  if (role === 'assistant' || role === 'user') {
+    div.innerHTML = formatRpgText(text);
+  } else {
+    div.textContent = text;
+  }
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
 }
+
 
 function renderHistory() {
   const log = document.getElementById('chatLog');
